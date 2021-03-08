@@ -22,7 +22,6 @@ public:
     void Remove(T elem);    // Remove element from the tree
     bool Contains(T elem);  // Determines if elem is in the tree
 
-
     int Size();     // Number of elements in the tree
 
     // These are used by the iterator
@@ -30,12 +29,13 @@ public:
     T GetNextItem();
 private:
     struct Node {
-        Node* left;
-        Node* right;
+        Node* left = nullptr;
+        Node* right = nullptr;
         T value;
     };
     Node* root;
-    int length;
+    int numNodes;
+
     queue<T> iterArr;     // queue used for the iterator
 
     void DestroyTree(Node* node);
@@ -43,10 +43,11 @@ private:
     void DeleteNode(Node*& subtree);
     void RemoveHelper(Node*& subtree, T elem);
 
+    bool ContainsHelper(Node* curr, T elem);
+
     void PlacePreOrder(Node* node);
     void PlacePostOrder(Node* node);
     void PlaceInOrder(Node* node);
-
 };
 
 

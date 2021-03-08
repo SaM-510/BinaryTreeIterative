@@ -5,7 +5,7 @@
 template<class T>
 TreeT<T>::TreeT() {
     root = nullptr;
-    length = 0;
+    numNodes = 0;
 }
 
 template<class T>
@@ -26,38 +26,38 @@ void TreeT<T>::DestroyTree(TreeT::Node *node) {
 
 template<class T>
 void TreeT<T>::Add(T elem) {
-    Node* curr = root;
 
-    // Create a new node
     Node* newNode = new Node;
     newNode->value = elem;
-    newNode->left = nullptr;
-    newNode->right = nullptr;
 
-    while(curr != nullptr) {
-        if (elem == curr->value) {
+    if (root == nullptr) {
+        root = newNode;
+        numNodes++;
+        return;
+    }
+
+    Node* curr = root;
+    while(true) {
+        if (elem < curr->value) {
+            if (curr->left == nullptr){
+                curr->left = newNode;
+                break;
+            }
+            curr = curr->left;
+        }
+        else if (elem > curr->value) {
+            if (curr->right == nullptr){
+                curr->right = newNode;
+                break;
+            }
+            curr = curr->right;
+        }
+        else {
             delete newNode;
             return;
         }
-        else if (elem < curr->value) {
-            if (curr->left == nullptr) {
-                curr->left = newNode;
-                break;      // found the leaf
-            } else {
-                curr = curr->left;
-            }
-        }
-        else {
-            if (curr->right == nullptr) {
-                curr->right = newNode;
-                break;      // found the leaf
-            } else {
-                curr = curr->right;
-            }
-        }
     }
-
-    length++;
+    numNodes++;
 }
 
 template<class T>
@@ -80,7 +80,7 @@ void TreeT<T>::RemoveHelper(Node*& subtree, T item) {
 }
 
 template<class T>
-void TreeT<T>::DeleteNode(TreeT::Node *&subtree) {
+void TreeT<T>::DeleteNode(Node *&subtree) {
 
     T item;
     Node* tempPtr;
@@ -127,9 +127,20 @@ bool TreeT<T>::Contains(T elem) {
     return false;
 }
 
+//template<class T>
+//bool TreeT<T>::Contains(T elem) {
+//    return ContainsHelper(root, elem);
+//}
+//
+//// Used for recursive version.
+//template<class T>
+//bool TreeT<T>::ContainsHelper(Node* curr, T elem) {
+//
+//}
+
 template<class T>
 int TreeT<T>::Size() {
-    return length;
+    return numNodes;
 }
 
 template<class T>
