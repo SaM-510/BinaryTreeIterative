@@ -6,11 +6,12 @@
 #ifndef TREET_H
 #define TREET_H
 
-#include <queue>
+#include <queue> // stl library
 using namespace std;
 
 // Used to identify the order you wish to traverse the tree
-enum Order {PRE_ORDER, POST_ORDER, IN_ORDER};
+enum Order {POST_ORDER, IN_ORDER, PRE_ORDER};
+            //  0           1          2
 
 template<class T>
 class TreeT {
@@ -18,15 +19,18 @@ public:
     TreeT();
     ~TreeT();
 
-    void Add(T elem);       // Add element to the tree
-    void Remove(T elem);    // Remove element from the tree
-    bool Contains(T elem);  // Determines if elem is in the tree
+    TreeT& operator=(const TreeT& otherTree);
 
-    int Size();     // Number of elements in the tree
+    void Add(T value);       // Add value to the tree
+    void Remove(T value);    // Remove value from the tree
+    bool Contains(T value);  // Determines if value is in the tree
+
+    int Size();     // Number of value in the tree
 
     // These are used by the iterator
     void ResetIterator(Order traverseOrder);    // Initializes the Iterator
     T GetNextItem();
+
 private:
     struct Node {
         Node* left = nullptr;
@@ -35,16 +39,20 @@ private:
     };
     Node* root;
     int numNodes;
+    queue<T> printQueue;
 
-    queue<T> iterArr;     // queue used for the iterator
-
+    // Used for de-constructor
     void DestroyTree(Node* node);
 
+    // Used for Node removal
+    void RemoveHelper(Node*& subtree, T value);
     void DeleteNode(Node*& subtree);
-    void RemoveHelper(Node*& subtree, T elem);
+    void GetPredecessor(Node* curr, T& value);
 
-    bool ContainsHelper(Node* curr, T elem);
+    void CopyHelper(Node*& thisTree, Node* otherTree);
 
+    // Used for iterator
+    queue<T> iterArr;     // queue used for the iterator
     void PlacePreOrder(Node* node);
     void PlacePostOrder(Node* node);
     void PlaceInOrder(Node* node);

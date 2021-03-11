@@ -25,10 +25,10 @@ void TreeT<T>::DestroyTree(TreeT::Node *node) {
 
 
 template<class T>
-void TreeT<T>::Add(T elem) {
+void TreeT<T>::Add(T value) {
 
     Node* newNode = new Node;
-    newNode->value = elem;
+    newNode->value = value;
 
     if (root == nullptr) {
         root = newNode;
@@ -38,14 +38,14 @@ void TreeT<T>::Add(T elem) {
 
     Node* curr = root;
     while(true) {
-        if (elem < curr->value) {
+        if (value < curr->value) {
             if (curr->left == nullptr){
                 curr->left = newNode;
                 break;
             }
             curr = curr->left;
         }
-        else if (elem > curr->value) {
+        else if (value > curr->value) {
             if (curr->right == nullptr){
                 curr->right = newNode;
                 break;
@@ -66,16 +66,16 @@ void TreeT<T>::Remove(T item) {
 }
 
 template<class T>
-void TreeT<T>::RemoveHelper(Node*& subtree, T item) {
+void TreeT<T>::RemoveHelper(Node*& subtree, T value) {
 
-    if (item == subtree->value) {
+    if (value == subtree->value) {
         DeleteNode(subtree);  // Found the node. Now delete it.
     }
-    else if (item < subtree->value) {
-        subtree = subtree->left; // go left
+    else if (value < subtree->value) {
+        subtree = subtree->left;    // go left
     }
     else {
-        subtree = subtree->right; // go right
+        subtree = subtree->right;   // go right
     }
 }
 
@@ -108,15 +108,24 @@ void TreeT<T>::DeleteNode(Node *&subtree) {
     }
 }
 
+
 template<class T>
-bool TreeT<T>::Contains(T elem) {
+void TreeT<T>::GetPredecessor(TreeT::Node *curr, T& value) {
+    while (curr->right != nullptr) {
+        curr = curr->right;
+    }
+    value = curr->value;
+}
+
+template<class T>
+bool TreeT<T>::Contains(T value) {
     Node* curr = root;
 
     while(curr != nullptr) {
-        if (elem == curr->value) {
+        if (value == curr->value) {
             return true;
         }
-        else if (elem < curr->value) {
+        else if (value < curr->value) {
             curr = curr->left;
         }
         else {
@@ -127,17 +136,6 @@ bool TreeT<T>::Contains(T elem) {
     return false;
 }
 
-//template<class T>
-//bool TreeT<T>::Contains(T elem) {
-//    return ContainsHelper(root, elem);
-//}
-//
-//// Used for recursive version.
-//template<class T>
-//bool TreeT<T>::ContainsHelper(Node* curr, T elem) {
-//
-//}
-
 template<class T>
 int TreeT<T>::Size() {
     return numNodes;
@@ -145,33 +143,75 @@ int TreeT<T>::Size() {
 
 template<class T>
 void TreeT<T>::ResetIterator(Order traverseOrder) {
+    printQueue.empty();
+
     if (traverseOrder == IN_ORDER)
         PlaceInOrder(root);
     else if (traverseOrder == POST_ORDER)
         PlacePostOrder(root);
-    else
+    else if (traverseOrder == PRE_ORDER)
         PlacePreOrder(root);
 }
 
 template<class T>
 T TreeT<T>::GetNextItem() {
-    return T();
+    T value = printQueue.front();  // Top, peek, front
+    printQueue.pop();
+    return value;
 }
 
 template<class T>
-void TreeT<T>::PlacePreOrder(TreeT::Node *node) {
+void TreeT<T>::PlacePreOrder(Node *node) {
+    if (node == nullptr)
+        return;
 
+    printQueue.push(node->value);
+    PlacePreOrder(node->left);
+    PlacePreOrder(node->right);
 }
 
 template<class T>
-void TreeT<T>::PlacePostOrder(TreeT::Node *node) {
+void TreeT<T>::PlacePostOrder(Node *node) {
+    if (node == nullptr)
+        return;
 
+    PlacePostOrder(node->left);
+    PlacePostOrder(node->right);
+    printQueue.push(node->value);
 }
 
 template<class T>
-void TreeT<T>::PlaceInOrder(TreeT::Node *node) {
+void TreeT<T>::PlaceInOrder(Node *node) {
+    if (node == nullptr)
+        return;
 
+    PlaceInOrder(node->left);
+    printQueue.push(node->value);
+    PlaceInOrder(node->right);
 }
+
+template<class T>
+TreeT<T>& TreeT<T>::operator=(const TreeT &otherTree) {
+
+    CopyHelper(root, otherTree.root);
+    numNodes = otherTree.numNodes;
+
+    return *this;
+}
+
+template<class T>
+void TreeT<T>::CopyHelper(TreeT::Node*& thisTree, TreeT::Node *otherTree) {
+    if (otherTree == nullptr) {
+        thisTree = nullptr;
+        return;
+    }
+
+    thisTree = new Node;
+    thisTree->value = otherTree->value;
+    CopyHelper(thisTree->left, otherTree->left);
+    CopyHelper(thisTree->right, otherTree->right);
+}
+
 
 
 
