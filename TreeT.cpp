@@ -68,6 +68,8 @@ void TreeT<T>::Remove(T item) {
 template<class T>
 void TreeT<T>::RemoveHelper(Node*& subtree, T value) {
 
+    while(subtree != nullptr)
+    {
     if (value == subtree->value) {
         DeleteNode(subtree);  // Found the node. Now delete it.
     }
@@ -76,6 +78,7 @@ void TreeT<T>::RemoveHelper(Node*& subtree, T value) {
     }
     else {
         subtree = subtree->right;   // go right
+    }
     }
 }
 
